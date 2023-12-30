@@ -1,5 +1,6 @@
-import {SafeAreaView, StatusBar, View, Text, Image} from 'react-native'
+import {SafeAreaView, StatusBar, View, Text, Image, TextInput} from 'react-native'
 import React from 'react'
+import Ionic from 'react-native-vector-icons/Ionicons'
 
 export default function Home() {
   return (
@@ -31,6 +32,17 @@ export default function Home() {
             style={{width: '100%', height: '100%', borderRadius: 100}}
             />
         </View>
+      </View>
+     <View>
+     <View style={{width:'100%', justifyContent:'center', alignItems:'center'}}> 
+        <View style={{width: '90%', paddingHorizontal:  20, flexDirection:'row', height: 50, alignItems:'center', justifyContent:'space-between', backgroundColor:'#262532', borderRadius: 10}}>
+        
+          <Ionic name='mic-outline' style={{fontSize:18, color:'#ffffff', opacity: 0.4}}/>
+          <TextInput placeholder='Поиск' placeholderTextColor="#70717A" />
+          <Ionic name='search' style={{fontSize:18, color:'#ffffff', opacity: 0.4}}/>
+
+      </View>        
+      </View>
       </View>
     </SafeAreaView>
   )
