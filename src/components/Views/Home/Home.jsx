@@ -38,7 +38,7 @@ export default function Home() {
         <View style={{width: '90%', paddingHorizontal:  20, flexDirection:'row', height: 50, alignItems:'center', justifyContent:'space-between', backgroundColor:'#262532', borderRadius: 10}}>
         
           <Ionic name='mic-outline' style={{fontSize:18, color:'#ffffff', opacity: 0.4}}/>
-          <TextInput placeholder='Поиск' placeholderTextColor="#70717A" />
+          <TextInput placeholder='Поиск' placeholderTextColor="#70717A" style={{color: '#fff'}} />
           <Ionic name='search' style={{fontSize:18, color:'#ffffff', opacity: 0.4}}/>
 
       </View>        
