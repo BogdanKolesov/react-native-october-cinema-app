@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StatusBar, View, Text, Image, TextInput, FlatList } from 'react-native';
+import { SafeAreaView, StatusBar, View, Text, Image, TextInput, FlatList, Dimensions} from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-import { APP_BASE_URL, APP_API_KEY } from '@env';
+import { APP_BASE_URL, APP_API_KEY, APP_POSTER_URL} from '@env';
 
 export default function Home() {
   const [moviesData, setMoviesData] = useState([]);
-
+  const WIDTH = Dimensions.get('screen').width
+  const ITEM_WIDTH = (WIDTH * 0.72)
+  const MOVIE_SPACE_WIDTH = (WIDTH - ITEM_WIDTH)
   useEffect(() => {
     getMoviesDataFromDB();
   }, []);
@@ -25,7 +27,7 @@ export default function Home() {
     }
   };
 
-  console.log(moviesData);
+
   return (
     <SafeAreaView style={{width: '100%', height: '100%', backgroundColor: '#1A1A23', padding: 0, position: 'relative'}}>
       <StatusBar barStyle='light-content' backgroundColor='#1A1A23'/>
@@ -92,9 +94,56 @@ export default function Home() {
       </View>
       <FlatList
         data={moviesData}
+        horizontal
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          justifyContent: 'center',
+          position: 'relative',
+          paddingBottom: 70,
+          zIndex: 1
+        }}
+        ListHeaderComponent={() =>{
+          return(
+            <View style={{width:MOVIE_SPACE_WIDTH, height: 300}}>
+
+            </View>
+          )
+        }}
+        ListFooterComponent={() =>{
+          return(
+            <View style={{width:MOVIE_SPACE_WIDTH, height: 300}}>
+
+            </View>
+          )
+        }}
         renderItem={({ item, index }) => (
-          <View>
-            <Text>{item.title}</Text>
+          
+          <View style={{
+            width: ITEM_WIDTH,
+            position: 'relative',
+            paddingHorizontal:24
+          }}>
+            <View style={{
+              marginHorizontal: 0,
+              height: 300,
+              elevation: 20,
+              borderRadius: 34,
+              borderColor: 'transparent'
+            }}>
+            
+              <Image
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: 34
+              }}
+              source={{url: `${APP_POSTER_URL}${item.poster_path}`}}/>
+              {/* {console.log( `ПУТЬ: ${APP_POSTER_URL}${item.poster_path}`)} */}
+              {/* <Text style={{color: '#ffffff'}}>
+              {item.title}
+            </Text> */}
+            </View>
+           
           </View>
         )}
         keyExtractor={(item, index) => index.toString()}
