@@ -32,7 +32,7 @@ export default function Home({ navigation }) {
 
 	const getMoviesDataFromDB = async () => {
 		try {
-			const response = await axios.get(`${APP_BASE_URL}/movie/popular?language=ru_RU&page=${page}`, {
+			const response = await axios.get(`${APP_BASE_URL}/movie/popular?language=ru-RU&page=${page}`, {
 				headers: {
 					Authorization: `Bearer ${APP_API_KEY}`,
 				},
