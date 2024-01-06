@@ -327,7 +327,7 @@ export default function MovieDetails({ route, navigation }) {
 										letterSpacing: 2,
 									}}
 								>
-									{isBuy ? 'Отменить покупку' : 'Купить билет'}
+									{isBuy ? 'Удалить из списка' : 'Добавить в список'}
 								</Text>
 							)}
 							<View

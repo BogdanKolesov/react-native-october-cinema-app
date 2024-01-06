@@ -73,7 +73,7 @@ export default function Home({ navigation }) {
 				}}
 			>
 				<View>
-					<Text style={{ color: '#ffffff', fontSize: 30, fontWeight: '300' }}>Кинотеатр "Октябрь"</Text>
+					<Text style={{ color: '#ffffff', fontSize: 30, fontWeight: '300' }}>Подбор фильмов</Text>
 					<View style={{ flexDirection: 'row' }}>
 						<Text
 							style={{
@@ -145,9 +145,9 @@ export default function Home({ navigation }) {
 						fontWeight: 'bold',
 					}}
 				>
-					Фильмы
+					Свежие
 				</Text>
-				<Text style={{ color: '#ffffff', fontSize: 16, marginRight: 8 }}>в прокате</Text>
+				<Text style={{ color: '#ffffff', fontSize: 16, marginRight: 8 }}>фильмы</Text>
 			</View>
 
 			{isLoading && (
