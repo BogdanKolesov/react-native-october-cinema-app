@@ -13,6 +13,7 @@ import Ionic from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { APP_BASE_URL, APP_API_KEY, APP_POSTER_URL } from '@env';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MovieDetails({ route, navigation }) {
 	const { movieId } = route.params;
@@ -20,6 +21,7 @@ export default function MovieDetails({ route, navigation }) {
 	const [movieDetails, setMovieDetails] = useState('');
 	const [movieProviders, setMovieProviders] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
+	const [isBuy, setIsBuy] = useState(false);
 
 	const WIDTH = Dimensions.get('screen').width;
 	const HEIGHT = Dimensions.get('screen').height;
@@ -27,47 +29,105 @@ export default function MovieDetails({ route, navigation }) {
 	const hour = Math.floor(movieDetails?.runtime / 60);
 	const min = movieDetails?.runtime - hour * 60;
 
-	useEffect(() => {
-		getMovieDetailsById(movieId);
-	}, [movieId]);
+	const handleBuyTickets = async (id) => {
+		setIsLoading(true);
+
+		try {
+			let itemsArr = await AsyncStorage.getItem('tickets');
+			itemsArr = JSON.parse(itemsArr) || [];
+
+			if (!itemsArr.includes(id)) {
+				itemsArr.push(id);
+				await AsyncStorage.setItem('tickets', JSON.stringify(itemsArr));
+				setIsBuy(true);
+			}
+
+			setIsLoading(false);
+		} catch (error) {
+			console.error(error);
+			setIsLoading(false);
+		}
+	};
+
+	const handleRemoveTickets = async (id) => {
+		setIsLoading(true);
+
+		try {
+			let itemsArr = await AsyncStorage.getItem('tickets');
+			itemsArr = JSON.parse(itemsArr) || [];
+
+			const index = itemsArr.indexOf(id);
+			if (index !== -1) {
+				itemsArr.splice(index, 1);
+				await AsyncStorage.setItem('tickets', JSON.stringify(itemsArr));
+				setIsBuy(false);
+			}
+
+			setIsLoading(false);
+		} catch (error) {
+			console.error(error);
+			setIsLoading(false);
+		}
+	};
+
+	const getItemsInStorageData = async (movieId) => {
+		setIsLoading(true);
+
+		try {
+			let items = await AsyncStorage.getItem('tickets');
+			items = JSON.parse(items) || [];
+
+			const isMovieInCart = items.includes(movieId);
+			setIsBuy(isMovieInCart);
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	const getMovieProviders = async (id) => {
 		setIsLoading(true);
-		let movieProArr = [];
+
 		try {
 			const response = await axios.get(`https://api.themoviedb.org/3/movie/${id}/watch/providers?language=ru-RU`, {
 				headers: {
 					Authorization: `Bearer ${APP_API_KEY}`,
 				},
 			});
-			const providersData = response.data.results.IN?.flatrate ? response.data.results.IN?.flatrate : null;
-			// console.log(providersData);
-			movieProArr.push(providersData);
-			// console.log(movieProArr);
-			setIsLoading(false);
-			return setMovieProviders(movieProArr[0] ? movieProArr[0] : null);
+
+			const providersData = response.data.results.IN?.flatrate || null;
+			setMovieProviders(providersData);
 		} catch (error) {
 			console.error(error);
-			throw error;
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const getMovieDetailsById = async (movieId) => {
 		setIsLoading(true);
+
 		try {
 			const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?language=ru-RU`, {
 				headers: {
 					Authorization: `Bearer ${APP_API_KEY}`,
 				},
 			});
+
 			setMovieDetails(response.data);
 			getMovieProviders(response.data.id);
-			setIsLoading(false);
 		} catch (error) {
 			console.error(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
+	useEffect(() => {
+		getMovieDetailsById(movieId);
+		getItemsInStorageData(movieId);
+	}, [movieId]);
 	return (
 		<SafeAreaView
 			style={{
@@ -234,10 +294,12 @@ export default function MovieDetails({ route, navigation }) {
 						}}
 					>
 						<TouchableOpacity
+							activeOpacity={0.8}
+							onPress={() => (!isBuy ? handleBuyTickets(movieId) : handleRemoveTickets(movieId))}
 							style={{
 								width: WIDTH * 0.5,
 								paddingVertical: 10,
-								backgroundColor: '#ff0000',
+								backgroundColor: isBuy ? '#ffffff' : '#ff0000',
 								alignItems: 'center',
 								justifyContent: 'center',
 								borderRadius: 4,
@@ -260,11 +322,12 @@ export default function MovieDetails({ route, navigation }) {
 							) : (
 								<Text
 									style={{
-										color: '#ffffff',
+										color: isBuy ? '#000000' : '#ffffff',
 										fontWeight: 'bold',
+										letterSpacing: 2,
 									}}
 								>
-									Купить билет
+									{isBuy ? 'Отменить покупку' : 'Купить билет'}
 								</Text>
 							)}
 							<View
